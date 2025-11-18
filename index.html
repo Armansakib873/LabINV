@@ -1,14 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab Inventory Tracker</title>
+    <title>Lab Inventory Tracker Pro</title>
     
-    <!-- LINK TO GOOGLE FONTS (Roboto) -->
+    <!-- LINK TO GOOGLE FONTS (Roboto & Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- LINK TO FONT AWESOME FOR ICONS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,242 +17,895 @@
     <!-- LINK TO CHART.JS FOR CHARTS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-    /* --- NEW PROFESSIONAL UI/DESIGN --- */
-    
-    /* 1. Root Variables & Global Styles */
-    :root {
-        --primary-color: #3B82F6; /* A modern, friendly blue */
-        --primary-hover: #2563EB;
-        --secondary-color: #E5E7EB; /* Light gray for backgrounds/borders */
-        --background-color: #F9FAFB; /* Very light page background */
-        --card-background: #FFFFFF;
-        --text-dark: #1F2937;
-        --text-light: #6B7280;
-        --accent-green: #10B981;
-        --accent-red: #EF4444;
-        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-        --border-radius: 8px;
-    }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
 
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-dark);
-        line-height: 1.6;
-    }
+:root {
+    /* Color Palette */
+    --primary-color: #060700cb;
+    --primary-hover: #ffed76;
+    --primary-light: #EEF2FF;
+    --secondary-color: #E5E7EB;
+    --background-color: #F9FAFB;
+    --card-background: #FFFFFF;
 
+    /* Text Colors */
+    --text-dark: rgba(21, 45, 39, 0.789);
+    --text-medium: #374151;
+    --text-light: #434141;
+
+    /* Accent Colors */
+    --accent-green: #10B981;
+    --accent-green-hover: #059669;
+    --accent-red: #EF4444;
+    --accent-red-hover: #DC2626;
+    --accent-orange: #F59E0B;
+    --accent-orange-hover: #D97706;
+    --accent-purple: #98d8ce;
+    --accent-blue: #3bf6bb;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+    /* Borders */
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #fcfcfcb9 0%, #ffffff 100%);
+    background-attachment: fixed;
+    color: var(--text-dark);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+#app-container {
+    max-width: 1600px;
+    margin: 0 auto 0rem;
+    padding: 0rem;
+}
+
+/* 
+-----------------------------------------------------------------
+2. LAYOUT & STRUCTURE
+   - Header & Navigation
+   - Main Content Area
+-----------------------------------------------------------------
+*/
+
+header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem 2rem;
+
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+header h1 {
+    color: rgba(21, 100, 106, 0.678);
+    font-weight: 800;
+    font-size: 1.75rem;
+    letter-spacing: -0.5px;
+}
+
+header .header-subtitle {
+    font-size: 0.775rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+main {
+    background: var(--card-background);
+    padding: 2rem;
+
+    box-shadow: var(--shadow-lg);
+    animation: fadeInUp 0.5s ease-out;
+}
+
+  /* #analysis-view{
+     margin: 0rem 1.4rem;
+} */
+
+.view-header {
+    margin-bottom: 2rem;
+}
+
+.view-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: rgba(53, 135, 119, 0.895);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.view-header h2 i {
+    color: var(--primary-color);
+}
+
+.view-header .view-subtitle {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 
+-----------------------------------------------------------------
+3. REUSABLE COMPONENTS
+   - Navigation & Buttons
+   - Cards (Stat, Info)
+   - Forms & Controls
+   - Tables
+   - Badges
+   - Toasts (Notifications)
+-----------------------------------------------------------------
+*/
+
+/* --- Navigation & Buttons --- */
+nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: 2px solid transparent;
+    background-color: transparent;
+    color: var(--text-light);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.nav-btn i {
+    font-size: 1.1rem;
+}
+
+.nav-btn .nav-label {
+    display: none; /* Hidden by default, shown on wider screens */
+}
+
+button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: var(--border-radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+    color: white;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button i,
+button span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Button Variants */
+button.edit-btn, button.edit-analyzer-btn, button.edit-test-btn { 
+    background: linear-gradient(135deg, var(--accent-orange), #FBBF24);
+}
+button.delete-btn, button.delete-analyzer-btn, button.delete-test-btn { 
+    background: linear-gradient(135deg, var(--accent-red), #F87171);
+}
+#export-summary-btn, #export-analysis-btn { 
+    background: linear-gradient(135deg, var(--accent-green), #34D399);
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: white;
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-medium);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.quick-action-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+
+/* --- Cards --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(139, 92, 246, 0.05));
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--secondary-color);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+    transition: var(--transition);
+    opacity: 0;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.stat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.stat-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Stat Card Icon Variants */
+.stat-card-icon.primary { background: linear-gradient(135deg, var(--primary-color), var(--accent-purple)); }
+.stat-card-icon.green   { background: linear-gradient(135deg, var(--accent-green), #34D399); }
+.stat-card-icon.orange  { background: linear-gradient(135deg, var(--accent-orange), #FBBF24); }
+.stat-card-icon.red     { background: linear-gradient(135deg, var(--accent-red), #F87171); }
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.info-card {
+
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(139, 92, 246, 0.05));
+    border: 2px solid var(--primary-light);
+    border-radius: var(--border-radius-sm);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-card-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.info-card-content {
+    color: var(--text-medium);
+    line-height: 1.6;
+}
+
+/* --- Forms & Controls --- */
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+    background: var(--background-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="month"],
+select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-sm);
+    background-color: white;
+    transition: var(--transition);
+    color: var(--text-dark);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+input:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+/* --- Tables --- */
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--secondary-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid var(--secondary-color);
+    padding: 1rem 1.25rem;
+    text-align: center;
+}
+
+thead th {
+    background: linear-gradient(180deg, var(--background-color), #F3F4F6);
+    font-weight: 700;
+    color: var(--text-dark);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+tbody tr {
+    transition: var(--transition);
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--background-color);
+}
+
+tbody tr:hover {
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.test-name-col, .sticky-col {
+    font-weight: 600;
+    text-align: left;
+    color: var(--text-dark);
+}
+
+.sticky-col {
+    position: sticky;
+    left: 0;
+    background-color: white; /* Default background */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+tbody tr:nth-child(even) .sticky-col {
+    background-color: var(--background-color);
+}
+
+tbody tr:hover .sticky-col {
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+table input[type="number"] {
+    width: 80px;
+    padding: 0.5rem;
+    text-align: center;
+    border: 2px solid var(--secondary-color);
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+table input[type="number"]:focus {
+    border-color: var(--primary-color);
+}
+
+/* --- Badges --- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.primary {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.badge.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent-green);
+}
+
+.badge.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--accent-orange);
+}
+
+/* --- Toast Notifications --- */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+    border-left: 4px solid var(--accent-green);
+}
+
+.toast.error {
+    border-left-color: var(--accent-red);
+}
+
+.toast i {
+    font-size: 1.5rem;
+}
+
+.toast.success i { color: var(--accent-green); }
+.toast.error i   { color: var(--accent-red); }
+
+/* 
+-----------------------------------------------------------------
+4. SPECIFIC VIEWS
+   - Analysis Dashboard
+   - Settings Page
+-----------------------------------------------------------------
+*/
+
+/* --- Analysis View --- */
+#analysis-charts-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.chart-wrapper {
+    background: var(--background-color);
+    padding: 2rem;
+    border-radius: var(--border-radius-sm);
+    border: 2px solid var(--secondary-color);
+    min-height: 400px;
+    position: relative;
+}
+
+.chart-wrapper canvas {
+    max-height: 400px;
+}
+
+/* --- Settings View --- */
+.settings-section {
+    margin-top: 3rem;
+    border-top: 2px solid var(--secondary-color);
+    padding-top: 2.5rem;
+}
+
+.settings-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.settings-section h3 i {
+    color: var(--primary-color);
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1.25rem;
+    align-items: flex-end;
+    background: var(--background-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 1.5rem;
+}
+
+.item-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius-sm);
+    background: white;
+    transition: var(--transition);
+}
+
+.item:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+    transform: translateX(4px);
+}
+
+.item span {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.05rem;
+}
+
+.item .actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.item button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem;
+}
+
+
+/* 
+-----------------------------------------------------------------
+5. UTILITY & STATE CLASSES
+   - Hidden
+   - Empty State
+   - Loading State
+-----------------------------------------------------------------
+*/
+
+.hidden {
+    display: none !important;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-light);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-medium);
+}
+
+.empty-state p {
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    color: var(--text-light);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--secondary-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* 
+-----------------------------------------------------------------
+6. ANIMATIONS
+   - Keyframe Definitions
+-----------------------------------------------------------------
+*/
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 
+-----------------------------------------------------------------
+7. RESPONSIVE DESIGN
+   - Media Queries for different screen sizes
+-----------------------------------------------------------------
+*/
+
+/* --- Tablet & Small Desktop (min-width: 640px) --- */
+@media (min-width: 640px) {
+    .nav-btn .nav-label {
+        display: inline;
+    }
+}
+
+/* --- Tablet (min-width: 768px) --- */
+@media (min-width: 768px) {
     #app-container {
-        max-width: 1400px;
-        margin: 0 auto;
+        padding: 0rem;
+    }
+    main {
+        padding: 2.5rem;
+    }
+
+}
+
+/* --- Desktop (min-width: 1024px) --- */
+@media (min-width: 1024px) {
+    #analysis-charts-container {
+        grid-template-columns: 2fr 1fr;
+    }
+    form {
+        grid-template-columns: 1fr 1fr auto;
+    }
+}
+
+/* --- Mobile (max-width: 768px) --- */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+    header h1 {
+        font-size: 1.25rem;
+    }
+    .header-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+    nav {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .nav-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    main {
         padding: 1.5rem;
     }
-
-    .hidden {
-        display: none !important;
-    }
-
-    /* 2. Header & Navigation */
-    header {
-        background-color: var(--card-background);
-        padding: 1.5rem 2rem;
-        border-radius: var(--border-radius);
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    header h1 {
-        color: var(--primary-color);
-        font-weight: 700;
-        font-size: 1.75rem;
-    }
-
-    nav {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .nav-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.6rem 1.2rem;
-        border: 1px solid transparent;
-        background-color: transparent;
-        color: var(--text-light);
-        border-radius: 6px;
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-    }
-    .nav-btn:hover {
-        background-color: var(--background-color);
-        color: var(--text-dark);
-    }
-    .nav-btn.active {
-        background-color: var(--primary-color);
-        color: var(--card-background);
-    }
-    .nav-btn i {
-        font-size: 1rem;
-    }
-
-    /* 3. Main Content Cards */
-    main {
-        background-color: var(--card-background);
-        padding: 2rem;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow);
-    }
-
     .view-header h2 {
         font-size: 1.5rem;
-        font-weight: 500;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        color: var(--text-dark);
     }
-
-    /* 4. Forms & Controls */
-    .controls-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        align-items: flex-end;
-    }
-
-    label {
-        display: block;
-        font-weight: 500;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        color: var(--text-light);
-    }
-
-    input[type="text"],
-    input[type="month"],
-    select {
-        width: 100%;
-        padding: 0.75rem;
-        font-size: 1rem;
-        border: 1px solid var(--secondary-color);
-        border-radius: 6px;
-        background-color: var(--background-color);
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    input:focus, select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-    }
-
-    button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 500;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        background-color: var(--primary-color);
-        color: var(--card-background);
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    }
-    button:hover {
-        background-color: var(--primary-hover);
-        transform: translateY(-1px);
-    }
-    button.edit-btn, button.edit-analyzer-btn { background-color: #F59E0B; }
-    button.edit-btn:hover, button.edit-analyzer-btn:hover { background-color: #D97706; }
-    button.delete-btn, button.delete-analyzer-btn { background-color: var(--accent-red); }
-    button.delete-btn:hover, button.delete-analyzer-btn:hover { background-color: #DC2626; }
-    
-    #export-summary-btn { background-color: var(--accent-green); }
-    #export-summary-btn:hover { background-color: #059669; }
-
-    .settings-section { margin-top: 3rem; border-top: 1px solid var(--secondary-color); padding-top: 2rem; }
-    .settings-section h3 { font-size: 1.25rem; margin-bottom: 1.5rem; font-weight: 500; }
-    
-    form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1.5rem; align-items: flex-end; }
-
-    /* 5. Tables */
-    .table-container { margin-top: 2rem; overflow-x: auto; }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        white-space: nowrap;
-    }
-    
-    th, td {
-        border: 1px solid var(--secondary-color);
-        padding: 0.8rem 1rem;
-        text-align: center;
-    }
-
-    thead th {
-        background-color: var(--background-color);
-        font-weight: 500;
-        color: var(--text-light);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        position: sticky; top: 0; z-index: 10;
-    }
-
-    tbody tr:nth-child(even) { background-color: var(--background-color); }
-    .test-name-col, .sticky-col { font-weight: 500; text-align: left; }
-    
-    .sticky-col {
-        position: sticky; left: 0;
-        background-color: var(--card-background);
-    }
-    tbody tr:nth-child(even) .sticky-col {
-        background-color: var(--background-color);
-    }
-
-    /* 6. Settings Items */
-    .item-list-container { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
-    .item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        border: 1px solid var(--secondary-color);
-        border-radius: var(--border-radius);
-    }
-    .item span { font-weight: 500; }
-    .item .actions { display: flex; gap: 0.75rem; }
-    .item button { padding: 0.5rem 1rem; font-size: 0.9rem; }
-
-    /* 7. Analysis View */
-    #analysis-charts-container {
-        display: grid;
+    .controls-grid,
+    .stats-grid,
+    form {
         grid-template-columns: 1fr;
-        gap: 3rem;
-        margin-top: 2.5rem;
     }
+    table {
+        font-size: 0.875rem;
+    }
+    th, td {
+        padding: 0.75rem 0.5rem;
+    }
+    .item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .item .actions {
+        width: 100%;
+    }
+    .item button {
+        flex: 1;
+    }
+    .toast {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+    }
+}
 
-    @media (min-width: 1024px) {
-        #analysis-charts-container {
-            grid-template-columns: 2fr 1fr; /* Make bar chart wider than pie chart */
-        }
+/* --- Small Mobile (max-width: 480px) --- */
+@media (max-width: 480px) {
+    .nav-btn span {
+        display: none;
     }
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}
 </style>
 </head>
 <body>
@@ -259,76 +913,139 @@
     <div id="app-container">
         <!-- HEADER SECTION -->
         <header>
-            <h1><i class="fas fa-vial"></i> Lab Inventory</h1>
+            <div class="header-brand">
+                <div class="header-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div>
+                    <h1>Lab Inventory Pro</h1>
+                    <div class="header-subtitle">Professional Laboratory Management System</div>
+                </div>
+            </div>
             <nav>
-                <button id="nav-inventory" class="nav-btn active"><i class="fas fa-calendar-day"></i> <span>Daily Entry</span></button>
-                <button id="nav-summary" class="nav-btn"><i class="fas fa-chart-pie"></i> <span>Summary</span></button>
-                <button id="nav-analysis" class="nav-btn"><i class="fas fa-chart-line"></i> <span>Data Analysis</span></button>
-                <button id="nav-settings" class="nav-btn"><i class="fas fa-cog"></i> <span>Settings</span></button>
+                <button id="nav-inventory" class="nav-btn active">
+                    <i class="fas fa-calendar-day"></i> 
+                    <span class="nav-label">Daily Entry</span>
+                </button>
+                <button id="nav-summary" class="nav-btn">
+                    <i class="fas fa-chart-bar"></i> 
+                    <span class="nav-label">Summary</span>
+                </button>
+                <button id="nav-analysis" class="nav-btn">
+                    <i class="fas fa-chart-line"></i> 
+                    <span class="nav-label">Analysis</span>
+                </button>
+                <button id="nav-settings" class="nav-btn">
+                    <i class="fas fa-cog"></i> 
+                    <span class="nav-label">Settings</span>
+                </button>
             </nav>
         </header>
 
         <!-- MAIN INVENTORY VIEW (DAILY DATA ENTRY) -->
         <main id="inventory-view">
             <div class="view-header">
-                <h2>Daily Data Entry</h2>
-                <div class="controls-grid">
-                    <div>
-                        <label for="inv-analyzer-filter">Analyzer</label>
-                        <select id="inv-analyzer-filter"></select>
-                    </div>
-                    <div>
-                        <label for="inv-month-filter">Month</label>
-                        <input type="month" id="inv-month-filter">
-                    </div>
-                    <div>
-                        <label for="inv-day-filter">Day</label>
-                        <select id="inv-day-filter"></select>
-                    </div>
+                <h2><i class="fas fa-pen-to-square"></i>Daily Data Entry</h2>
+                <p class="view-subtitle">Record daily test consumption, quality control, calibrations, and waste tracking</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="inventory-stats"></div>
+
+            <!-- Info Card -->
+            <div class="info-card">
+                <div class="info-card-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Quick Guide</span>
+                </div>
+                <div class="info-card-content">
+                    Enter daily values for each test category. Your data is automatically saved as you type. Use the filters below to navigate between analyzers, months, and specific days.
                 </div>
             </div>
+
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="inv-analyzer-filter"><i class="fas fa-microscope"></i> Analyzer</label>
+                    <select id="inv-analyzer-filter"></select>
+                </div>
+                <div class="form-group">
+                    <label for="inv-month-filter"><i class="fas fa-calendar"></i> Month</label>
+                    <input type="month" id="inv-month-filter">
+                </div>
+                <div class="form-group">
+                    <label for="inv-day-filter"><i class="fas fa-calendar-day"></i> Day</label>
+                    <select id="inv-day-filter"></select>
+                </div>
+            </div>
+
             <div id="daily-data-container" class="table-container"></div>
         </main>
         
         <!-- MONTHLY SUMMARY VIEW -->
         <main id="summary-view" class="hidden">
             <div class="view-header">
-                <h2>Monthly Summary</h2>
-                <div class="controls-grid">
-                     <div>
-                        <label for="sum-analyzer-filter">Analyzer</label>
-                        <select id="sum-analyzer-filter"></select>
-                    </div>
-                    <div>
-                        <label for="sum-month-filter">Month</label>
-                        <input type="month" id="sum-month-filter">
-                    </div>
-                    <button id="export-summary-btn"><i class="fas fa-file-excel"></i> <span>Export</span></button>
-                </div>
+                <h2><i class="fas fa-table"></i>Monthly Summary</h2>
+                <p class="view-subtitle">View comprehensive monthly consumption data across all tests and days</p>
+
+
+
+
             </div>
-            <div id="summary-table-container" class="table-container"></div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="summary-stats"></div>
+
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="sum-analyzer-filter"><i class="fas fa-microscope"></i> Analyzer</label>
+                    <select id="sum-analyzer-filter"></select>
+                </div>
+                <div class="form-group">
+                    <label for="sum-month-filter"><i class="fas fa-calendar"></i> Month</label>
+                    <input type="month" id="sum-month-filter">
+                </div>
+                </div>
+                <button id="export-summary-btn">
+                    <i class="fas fa-file-excel"></i> 
+                    <span>Export to CSV</span>
+                </button>
+
+                     <div id="summary-table-container" class="table-container"></div>
+            </div>
+
+       
         </main>
 
         <!-- DATA ANALYSIS VIEW -->
         <main id="analysis-view" class="hidden">
             <div class="view-header">
-                <h2>Data Analysis</h2>
-                <div class="controls-grid">
-                     <div>
-                        <label for="an-analyzer-filter">Analyzer</label>
-                        <select id="an-analyzer-filter"></select>
-                    </div>
-                    <div>
-                        <label for="an-test-filter">Test</label>
-                        <select id="an-test-filter"></select>
-                    </div>
-                </div>
+                <h2><i class="fas fa-chart-line"></i>Data Analysis</h2>
+                <p class="view-subtitle">Visualize consumption trends and patterns with interactive charts</p>
             </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid" id="analysis-stats"></div>
+
+            <div class="controls-grid">
+                <div class="form-group">
+                    <label for="an-analyzer-filter"><i class="fas fa-microscope"></i> Analyzer</label>
+                    <select id="an-analyzer-filter"></select>
+                </div>
+                <div class="form-group">
+                    <label for="an-test-filter"><i class="fas fa-vial"></i> Test</label>
+                    <select id="an-test-filter"></select>
+                </div>
+                <button id="export-analysis-btn">
+                    <i class="fas fa-download"></i> 
+                    <span>Export Charts</span>
+                </button>
+            </div>
+
             <div id="analysis-charts-container">
                 <div class="chart-wrapper">
                     <canvas id="monthly-consumption-chart"></canvas>
                 </div>
-                 <div class="chart-wrapper">
+                <div class="chart-wrapper">
                     <canvas id="category-consumption-chart"></canvas>
                 </div>
             </div>
@@ -336,22 +1053,29 @@
 
         <!-- SETTINGS VIEW -->
         <main id="settings-view" class="hidden">
-            <div class="view-header"><h2>Settings</h2></div>
+            <div class="view-header">
+                <h2><i class="fas fa-sliders"></i>Settings</h2>
+                <p class="view-subtitle">Configure analyzers, tests, and system preferences</p>
+            </div>
             
             <div class="settings-section">
-                <h3>Manage Analyzers</h3>
+                <h3><i class="fas fa-microscope"></i>Manage Analyzers</h3>
                 <form id="add-analyzer-form">
                     <div class="form-group">
                         <label for="analyzer-name-input">Analyzer Name</label>
                         <input type="text" id="analyzer-name-input" placeholder="e.g., Architect c4000" required>
                     </div>
-                    <button type="submit"><i class="fas fa-plus"></i> <span>Add Analyzer</span></button>
+                    <div></div>
+                    <button type="submit">
+                        <i class="fas fa-plus-circle"></i> 
+                        <span>Add Analyzer</span>
+                    </button>
                 </form>
                 <div id="existing-analyzers-container" class="item-list-container"></div>
             </div>
             
             <div class="settings-section">
-                <h3>Manage Tests</h3>
+                <h3><i class="fas fa-vial"></i>Manage Tests</h3>
                 <form id="add-test-form">
                     <div class="form-group">
                         <label for="test-name-input">Test Name</label>
@@ -361,15 +1085,112 @@
                         <label for="test-analyzer-select">Assign to Analyzer</label>
                         <select id="test-analyzer-select" required></select>
                     </div>
-                    <button type="submit"><i class="fas fa-plus"></i> <span>Add Test</span></button>
+                    <button type="submit">
+                        <i class="fas fa-plus-circle"></i> 
+                        <span>Add Test</span>
+                    </button>
                 </form>
                 <div id="existing-tests-container" class="item-list-container"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3><i class="fas fa-database"></i>Data Management</h3>
+                <div class="info-card">
+                    <div class="info-card-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Data Backup & Reset</span>
+                    </div>
+<div class="info-card">
+    <div class="info-card-title">
+        <i class="fas fa-database"></i>
+        <span>Data Tools</span>
+    </div>
+
+    <!-- ===== CONFIGURATION BACKUP & RESTORE ===== -->
+    <div class="info-card-content" style="margin-bottom: 2rem;">
+        <p style="margin-bottom: 1rem;">
+            Use these tools to backup or restore your application's configuration (analyzers and tests).
+            <strong>Inventory data is not included.</strong>
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button id="backup-data-btn" style="background: linear-gradient(135deg, var(--accent-blue), #60A5FA);">
+                <i class="fas fa-download"></i>
+                <span>Backup Config</span>
+            </button>
+            <button id="restore-data-btn" style="background: linear-gradient(135deg, var(--accent-green), #34D399);">
+                <i class="fas fa-upload"></i>
+                <span>Restore Config</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== SELECTIVE DATA DELETION (RESET) ===== -->
+    <div class="info-card-content">
+        <div class="info-card-title" style="color: var(--accent-red);">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Danger Zone - Data Deletion</span>
+        </div>
+        <p style="margin-bottom: 1.5rem;">
+            Perform irreversible data deletion from the database. Please be certain before proceeding.
+        </p>
+        <div class="item-list-container">
+            <!-- Option 1: Reset Inventory -->
+            <div class="item">
+                <div>
+                    <span style="font-size: 1.1rem;">Reset Inventory Data</span>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">This will delete <strong>all daily entries</strong>. Your analyzers and test configurations will remain.</p>
+                </div>
+                <button id="reset-inventory-btn" class="delete-btn">
+                    <i class="fas fa-eraser"></i>
+                    <span>Reset Inventory</span>
+                </button>
+            </div>
+            <!-- Option 2: Reset Tests -->
+            <div class="item">
+                <div>
+                    <span style="font-size: 1.1rem;">Reset Tests & Inventory</span>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">This will delete <strong>all tests and all inventory data</strong>. Your analyzers will remain.</p>
+                </div>
+                <button id="reset-tests-btn" class="delete-btn">
+                    <i class="fas fa-vials"></i>
+                    <span>Reset Tests</span>
+                </button>
+            </div>
+            <!-- Option 3: Reset Everything -->
+            <div class="item">
+                <div>
+                    <span style="font-size: 1.1rem;">Reset All Data</span>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.25rem;">This will delete <strong>everything</strong>. The application will be returned to a blank state.</p>
+                </div>
+                <button id="reset-analyzers-btn" class="delete-btn">
+                    <i class="fas fa-trash-restore"></i>
+                    <span>Reset All</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+                </div>
             </div>
         </main>
     </div>
 
+    <!-- Hidden file input for restore -->
+    <input type="file" id="restore-file-input" accept=".json" style="display: none;">
+
+
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+  const SUPABASE_URL = 'https://flgthztospakbzcdkvic.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZ3RoenRvc3Bha2J6Y2RrdmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNDI4OTgsImV4cCI6MjA3ODcxODg5OH0.YzTG7p-dJ4gsebC7bakrP8lc2UBWlZOjxFiYXs8YdZk';
+// AFTER (Correct)
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    
+    // --- 2. MAIN APPLICATION LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+
+
     // --- DOM ELEMENT REFERENCES ---
     const inventoryView = document.getElementById('inventory-view');
     const summaryView = document.getElementById('summary-view');
@@ -398,33 +1219,87 @@ document.addEventListener('DOMContentLoaded', () => {
     const anTestFilter = document.getElementById('an-test-filter');
     const monthlyConsumptionChartCanvas = document.getElementById('monthly-consumption-chart').getContext('2d');
     const categoryConsumptionChartCanvas = document.getElementById('category-consumption-chart').getContext('2d');
+    const exportAnalysisBtn = document.getElementById('export-analysis-btn');
+    const backupDataBtn = document.getElementById('backup-data-btn');
+    const restoreDataBtn = document.getElementById('restore-data-btn');
+    const restoreFileInput = document.getElementById('restore-file-input');
+    const resetInventoryBtn = document.getElementById('reset-inventory-btn');
+const resetTestsBtn = document.getElementById('reset-tests-btn');
+const resetAnalyzersBtn = document.getElementById('reset-analyzers-btn');
+
+    // Stats containers
+    const inventoryStats = document.getElementById('inventory-stats');
+    const summaryStats = document.getElementById('summary-stats');
+    const analysisStats = document.getElementById('analysis-stats');
 
     // --- APPLICATION STATE ---
     let appData = { analyzers: [], tests: [], inventoryData: {} };
     let monthlyConsumptionChart, categoryConsumptionChart;
 
-    // --- DATA HANDLING ---
-    const loadData = () => {
-        const storedData = localStorage.getItem('labInventoryData');
-        if (storedData) {
-            const parsedData = JSON.parse(storedData);
-            appData = {
-                analyzers: Array.isArray(parsedData.analyzers) ? parsedData.analyzers : [],
-                tests: Array.isArray(parsedData.tests) ? parsedData.tests : [],
-                inventoryData: typeof parsedData.inventoryData === 'object' && parsedData.inventoryData !== null ? parsedData.inventoryData : {}
-            };
-        }
+    // --- UTILITY FUNCTIONS ---
+    const showToast = (message, type = 'success') => {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     };
-    const saveData = () => localStorage.setItem('labInventoryData', JSON.stringify(appData));
+
+    const formatNumber = (num) => {
+        return new Intl.NumberFormat().format(num);
+    };
+
+    const getMonthName = (monthStr) => {
+        const [year, month] = monthStr.split('-');
+        return new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' });
+    };
+
 
     // --- INITIALIZATION ---
-    const init = () => {
-        loadData();
-        setupEventListeners();
-        setDefaultMonthAndDay();
-        renderAll();
-        switchView('inventory');
-    };
+// --- INITIALIZATION ---
+const init = async () => {
+    // We will no longer load from localStorage. Instead, we fetch from Supabase.
+    await loadInitialData(); 
+    
+    setupEventListeners();
+    setDefaultMonthAndDay();
+    renderAll();
+    switchView('inventory');
+    showToast('Lab Inventory Pro loaded successfully!');
+};
+
+// This is our new data loading function
+const loadInitialData = async () => {
+    // Show a loading indicator here if you have one
+    const { data: analyzers, error: analyzerError } = await supabaseClient.from('analyzers').select('*');
+    if (analyzerError) {
+        console.error('Error fetching analyzers:', analyzerError);
+        showToast('Error fetching analyzers', 'error');
+        return;
+    }
+
+    const { data: tests, error: testError } = await supabaseClient.from('tests').select('*');
+    if (testError) {
+        console.error('Error fetching tests:', testError);
+        showToast('Error fetching tests', 'error');
+        return;
+    }
+    
+    // Populate our client-side state
+    appData.analyzers = analyzers || [];
+ appData.tests = tests.map(t => ({
+  ...t,
+  analyzerId: t.analyzer_id  // FIX HERE
+}));
+
+    appData.inventoryData = {}; // This will be loaded on-demand
+};
     
     const setDefaultMonthAndDay = () => {
         const now = new Date();
@@ -459,34 +1334,73 @@ document.addEventListener('DOMContentLoaded', () => {
         anTestFilter.addEventListener('change', renderAnalysisCharts);
         dailyDataContainer.addEventListener('input', handleTableInput);
         exportSummaryBtn.addEventListener('click', exportSummaryToCSV);
+        exportAnalysisBtn.addEventListener('click', exportAnalysisData);
         addAnalyzerForm.addEventListener('submit', handleAddAnalyzer);
         existingAnalyzersContainer.addEventListener('click', handleAnalyzerActions);
         addTestForm.addEventListener('submit', handleAddTest);
         existingTestsContainer.addEventListener('click', handleTestActions);
+        backupDataBtn.addEventListener('click', backupData);
+        restoreDataBtn.addEventListener('click', () => restoreFileInput.click());
+        restoreFileInput.addEventListener('change', restoreData);
+         resetInventoryBtn.addEventListener('click', handleResetInventory);
+    resetTestsBtn.addEventListener('click', handleResetTests);
+    resetAnalyzersBtn.addEventListener('click', handleResetAnalyzers);
     };
 
     // --- VIEW SWITCHING & RENDERING ---
-    const switchView = viewName => {
-        [inventoryView, summaryView, analysisView, settingsView].forEach(v => v.classList.add('hidden'));
-        [navInventoryBtn, navSummaryBtn, navAnalysisBtn, navSettingsBtn].forEach(b => b.classList.remove('active'));
-        if (viewName === 'inventory') {
+const switchView = viewName => {
+    console.log(`Switching to view: '${viewName}'`);
+
+    // 1. Hide all main view elements first. This is a guaranteed reset.
+    inventoryView.classList.add('hidden');
+    summaryView.classList.add('hidden');
+    analysisView.classList.add('hidden');
+    settingsView.classList.add('hidden');
+
+    // 2. Deactivate all navigation buttons.
+    navInventoryBtn.classList.remove('active');
+    navSummaryBtn.classList.remove('active');
+    navAnalysisBtn.classList.remove('active');
+    navSettingsBtn.classList.remove('active');
+
+    // 3. IMPORTANT: Now, based on the viewName, show the correct container and activate the button.
+    // We are ONLY handling visibility here.
+    switch (viewName) {
+        case 'inventory':
             inventoryView.classList.remove('hidden');
             navInventoryBtn.classList.add('active');
-            renderDailyEntryView();
-        } else if (viewName === 'summary') {
+            break;
+        case 'summary':
             summaryView.classList.remove('hidden');
             navSummaryBtn.classList.add('active');
-            renderSummaryTable();
-        } else if (viewName === 'analysis') {
+            break;
+        case 'analysis':
             analysisView.classList.remove('hidden');
             navAnalysisBtn.classList.add('active');
-            renderAnalysisView();
-        } else if (viewName === 'settings') {
+            break;
+        case 'settings':
             settingsView.classList.remove('hidden');
             navSettingsBtn.classList.add('active');
+            break;
+    }
+
+    // 4. AFTER the correct view is made visible, call the corresponding render function.
+    // This separates the rendering logic from the visibility logic.
+    switch (viewName) {
+        case 'inventory':
+            renderDailyEntryView();
+            break;
+        case 'summary':
+            renderSummaryTable();
+            break;
+        case 'analysis':
+            renderAnalysisView();
+            break;
+        case 'settings':
             renderSettings();
-        }
-    };
+            break;
+    }
+};
     
     const renderAll = () => {
         renderAnalyzerFilters();
@@ -496,64 +1410,407 @@ document.addEventListener('DOMContentLoaded', () => {
     const populateDayFilter = selectedMonth => {
         const [year, month] = selectedMonth.split('-').map(Number);
         const daysInMonth = new Date(year, month, 0).getDate();
-        invDayFilter.innerHTML = Array.from({ length: daysInMonth }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join('');
+        invDayFilter.innerHTML = Array.from({ length: daysInMonth }, (_, i) => 
+            `<option value="${i + 1}">${i + 1}</option>`
+        ).join('');
     };
 
     const renderAnalyzerFilters = () => {
-        const optionsHtml = appData.analyzers.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-        invAnalyzerFilter.innerHTML = sumAnalyzerFilter.innerHTML = anAnalyzerFilter.innerHTML = optionsHtml;
-        sumAnalyzerFilter.value = invAnalyzerFilter.value; // Sync filters initially
+        const optionsHtml = appData.analyzers.map(a => 
+            `<option value="${a.id}">${a.name}</option>`
+        ).join('');
+        
+        invAnalyzerFilter.innerHTML = optionsHtml;
+        sumAnalyzerFilter.innerHTML = optionsHtml;
+        anAnalyzerFilter.innerHTML = optionsHtml;
+        
+        if (appData.analyzers.length === 0) {
+            const emptyOption = '<option value="">No analyzers configured</option>';
+            invAnalyzerFilter.innerHTML = emptyOption;
+            sumAnalyzerFilter.innerHTML = emptyOption;
+            anAnalyzerFilter.innerHTML = emptyOption;
+        }
     };
 
     const renderSettings = () => {
-        existingAnalyzersContainer.innerHTML = appData.analyzers.map(a => `<div class="item"><span>${a.name}</span><div class="actions"><button class="edit-analyzer-btn" data-id="${a.id}"><i class="fas fa-pencil-alt"></i></button><button class="delete-analyzer-btn" data-id="${a.id}"><i class="fas fa-trash"></i></button></div></div>`).join('');
-        testAnalyzerSelect.innerHTML = appData.analyzers.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
-        existingTestsContainer.innerHTML = appData.tests.map(t => {
-            const analyzer = appData.analyzers.find(a => a.id === t.analyzerId);
-            return `<div class="item"><span><strong>${t.name}</strong> (${analyzer ? analyzer.name : 'N/A'})</span><div class="actions"><button class="edit-test-btn" data-id="${t.id}"><i class="fas fa-pencil-alt"></i></button><button class="delete-test-btn" data-id="${t.id}"><i class="fas fa-trash"></i></button></div></div>`;
-        }).join('');
+        // Render analyzers
+        if (appData.analyzers.length === 0) {
+            existingAnalyzersContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-microscope"></i>
+                    <h3>No Analyzers Yet</h3>
+                    <p>Add your first analyzer to get started</p>
+                </div>
+            `;
+        } else {
+            existingAnalyzersContainer.innerHTML = appData.analyzers.map(a => `
+                <div class="item">
+                    <span><i class="fas fa-microscope" style="color: var(--primary-color); margin-right: 0.5rem;"></i>${a.name}</span>
+                    <div class="actions">
+                        <button class="edit-analyzer-btn" data-id="${a.id}">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Edit</span>
+                        </button>
+                        <button class="delete-analyzer-btn" data-id="${a.id}">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render test analyzer select
+        testAnalyzerSelect.innerHTML = appData.analyzers.map(a => 
+            `<option value="${a.id}">${a.name}</option>`
+        ).join('');
+        
+        if (appData.analyzers.length === 0) {
+            testAnalyzerSelect.innerHTML = '<option value="">Add an analyzer first</option>';
+        }
+
+        // Render tests
+        if (appData.tests.length === 0) {
+            existingTestsContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-vial"></i>
+                    <h3>No Tests Yet</h3>
+                    <p>Add tests for your analyzers to start tracking inventory</p>
+                </div>
+            `;
+        } else {
+            existingTestsContainer.innerHTML = appData.tests.map(t => {
+                const analyzer = appData.analyzers.find(a => a.id === t.analyzer_id);
+                return `
+                    <div class="item">
+                        <span>
+                            <i class="fas fa-vial" style="color: var(--accent-green); margin-right: 0.5rem;"></i>
+                            <strong>${t.name}</strong>
+                            <span class="badge primary" style="margin-left: 0.75rem;">${analyzer ? analyzer.name : 'N/A'}</span>
+                        </span>
+                        <div class="actions">
+                            <button class="edit-test-btn" data-id="${t.id}">
+                                <i class="fas fa-pencil-alt"></i>
+                                <span>Edit</span>
+                            </button>
+                            <button class="delete-test-btn" data-id="${t.id}">
+                                <i class="fas fa-trash"></i>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
     };
     
-    const renderDailyEntryView = () => {
-        const analyzerId = parseInt(invAnalyzerFilter.value, 10), selectedMonth = invMonthFilter.value, selectedDay = invDayFilter.value;
-        if (!analyzerId || !selectedMonth || !selectedDay) { dailyDataContainer.innerHTML = '<p>Please select an analyzer, month, and day.</p>'; return; }
-        const tests = appData.tests.filter(t => t.analyzerId === analyzerId);
-        if (tests.length === 0) { dailyDataContainer.innerHTML = '<p>No tests found for this analyzer. Add tests in Settings.</p>'; return; }
-        const dateStr = `${selectedMonth}-${selectedDay.toString().padStart(2, '0')}`;
-        const monthData = appData.inventoryData[selectedMonth] || {};
-        const categories = ['QC', 'Cal', 'Repeat', 'Waste', 'Test'];
-        let tableHTML = `<table class="single-day-table"><thead><tr><th class="test-name-col">Test Name</th><th>QC</th><th>Cal</th><th>Repeat</th><th>Waste</th><th>Test</th></tr></thead><tbody>`;
-        tests.forEach(test => {
-            const dayData = monthData[test.id]?.[dateStr] || {};
-            tableHTML += `<tr><td class="test-name-col">${test.name}</td>`;
-            categories.forEach(cat => {
-                const type = cat.toLowerCase();
-                tableHTML += `<td><input type="number" min="0" data-testid="${test.id}" data-date="${dateStr}" data-type="${type}" value="${dayData[type] || ''}"></td>`;
-            });
-            tableHTML += `</tr>`;
+  const renderDailyEntryView = async () => {
+    const analyzerId = parseInt(invAnalyzerFilter.value, 10);
+    const selectedMonth = invMonthFilter.value;
+    const selectedDay = invDayFilter.value;
+
+    if (!analyzerId || !selectedMonth || !selectedDay) {
+        dailyDataContainer.innerHTML = `<div class="empty-state"><i class="fas fa-info-circle"></i><p>Please select an analyzer, month, and day to view data.</p></div>`;
+        renderInventoryStats(null);
+        return;
+    }
+
+    const tests = appData.tests.filter(t => t.analyzer_id === analyzerId);
+    if (tests.length === 0) {
+        dailyDataContainer.innerHTML = `<div class="empty-state"><i class="fas fa-vial-circle-check"></i><p>No tests found for the selected analyzer.</p></div>`;
+        renderInventoryStats(null);
+        return;
+    }
+
+    const dateStr = `${selectedMonth}-${selectedDay.toString().padStart(2, '0')}`;
+    const testIds = tests.map(t => t.id);
+
+    // --- FETCH DATA FROM SUPABASE ---
+    const { data, error } = await supabaseClient
+        .from('inventory_entries')
+        .select('*')
+        .in('test_id', testIds)
+        .eq('entry_date', dateStr);
+
+    if (error) {
+        showToast('Error fetching daily data', 'error');
+        console.error(error);
+        return;
+    }
+
+    // Map the fetched data for easy lookup
+    const dayDataMap = new Map(data.map(entry => [entry.test_id, entry]));
+    // --- END FETCH ---
+
+    const categories = ['QC', 'Cal', 'Repeat', 'Waste', 'Test'];
+    let tableHTML = `<table class="single-day-table">
+                        <thead>
+                            <tr>
+                                <th class="sticky-col test-name-col">Test Name</th>
+                                <th>QC</th>
+                                <th>Calibrations</th>
+                                <th>Repeats</th>
+                                <th>Waste</th>
+                                <th>Tests</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+    tests.forEach(test => {
+        const entryData = dayDataMap.get(test.id);
+        tableHTML += `<tr><td class="sticky-col test-name-col">${test.name}</td>`;
+        categories.forEach(cat => {
+            const type = cat.toLowerCase();
+            const dbKey = type === 'test' ? 'test_count' : `${type}_count`;
+            const value = entryData ? (entryData[dbKey] || '') : '';
+            tableHTML += `
+                <td>
+                    <input type="number" min="0" data-testid="${test.id}" data-date="${dateStr}" data-type="${type}" value="${value}" placeholder="0">
+                </td>`;
         });
-        dailyDataContainer.innerHTML = tableHTML + `</tbody></table>`;
-    };
+        tableHTML += `</tr>`;
+    });
+
+    dailyDataContainer.innerHTML = tableHTML + `</tbody></table>`;
     
-    const renderSummaryTable = () => {
-        const analyzerId = parseInt(sumAnalyzerFilter.value, 10), selectedMonth = sumMonthFilter.value;
-        if (!analyzerId || !selectedMonth) { summaryTableContainer.innerHTML = '<p>Please select an analyzer and month.</p>'; return; }
-        const summaryData = calculateSummary(analyzerId, selectedMonth);
-        if(summaryData.length === 0) { summaryTableContainer.innerHTML = '<p>No tests or data found.</p>'; return; }
-        const [year, month] = selectedMonth.split('-').map(Number);
-        const daysInMonth = new Date(year, month, 0).getDate();
-        let tableHTML = `<table class="summary-table"><thead><tr>
-            <th class="sticky-col">Test Name</th><th>Total Actual Test</th><th>Total Others</th><th>Final Total</th>`;
-        for(let i=1; i <= daysInMonth; i++) { tableHTML += `<th>Day ${i}</th>`; }
-        tableHTML += `</tr></thead><tbody>`;
+    renderInventoryStats({ analyzerId, selectedMonth, dateStr, tests, dayDataMap });
+};
+
+    const renderInventoryStats = (data) => {
+    if (!data || !data.dayDataMap) { // Check for dayDataMap
+        inventoryStats.innerHTML = '';
+        return;
+    }
+
+    const { tests, dayDataMap } = data;
+    
+    let totalTests = 0;
+    let totalQC = 0;
+    let totalCal = 0;
+    let totalOthers = 0;
+
+    // Use the dayDataMap instead of the old appData object
+    tests.forEach(test => {
+        const dayData = dayDataMap.get(test.id);
+        if (dayData) {
+            totalTests += dayData.test_count || 0;
+            totalQC += dayData.qc_count || 0;
+            totalCal += dayData.cal_count || 0;
+            totalOthers += (dayData.repeat_count || 0) + (dayData.waste_count || 0);
+        }
+    });
+
+    // The rest of the function's innerHTML stays the same
+    inventoryStats.innerHTML = `
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div>
+                    <div class="stat-label">Total Tests</div>
+                    <div class="stat-value">${formatNumber(totalTests)}</div>
+                </div>
+                <div class="stat-card-icon primary"><i class="fas fa-flask"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div>
+                    <div class="stat-label">QC Runs</div>
+                    <div class="stat-value">${formatNumber(totalQC)}</div>
+                </div>
+                <div class="stat-card-icon green"><i class="fas fa-check-circle"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div>
+                    <div class="stat-label">Calibrations</div>
+                    <div class="stat-value">${formatNumber(totalCal)}</div>
+                </div>
+                <div class="stat-card-icon orange"><i class="fas fa-sliders"></i></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div>
+                    <div class="stat-label">Others</div>
+                    <div class="stat-value">${formatNumber(totalOthers)}</div>
+                </div>
+                <div class="stat-card-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+        </div>
+    `;
+};
+    
+  const renderSummaryTable = async () => {
+    const analyzerId = parseInt(sumAnalyzerFilter.value, 10);
+    const selectedMonth = sumMonthFilter.value;
+    
+    if (!analyzerId || !selectedMonth) {
+        summaryTableContainer.innerHTML = `<div class="empty-state"><i class="fas fa-info-circle"></i><p>Select an analyzer and month to see the summary.</p></div>`;
+        renderSummaryStats(null);
+        return;
+    }
+
+    const tests = appData.tests.filter(t => t.analyzer_id === analyzerId);
+    if (tests.length === 0) {
+        summaryTableContainer.innerHTML = `<div class="empty-state"><i class="fas fa-vial-circle-check"></i><p>No tests configured for this analyzer.</p></div>`;
+        renderSummaryStats(null);
+        return;
+    }
+
+    const testIds = tests.map(t => t.id);
+    const [year, month] = selectedMonth.split('-').map(Number);
+    const startDate = `${selectedMonth}-01`;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const endDate = `${selectedMonth}-${daysInMonth}`;
+
+    // --- FETCH DATA FOR THE ENTIRE MONTH ---
+    const { data: monthData, error } = await supabaseClient
+        .from('inventory_entries')
+        .select('*')
+        .in('test_id', testIds)
+        .gte('entry_date', startDate)
+        .lte('entry_date', endDate);
+
+    if (error) {
+        showToast('Error fetching summary data', 'error');
+        console.error(error);
+        return;
+    }
+    // --- END FETCH ---
+
+    // --- PROCESS THE FETCHED DATA ---
+    const summaryData = tests.map(test => {
+        const entries = monthData.filter(e => e.test_id === test.id);
+        const dailyTotals = Array(daysInMonth).fill(0);
+        let totalActualTest = 0;
+        let totalOthers = 0;
+
+        entries.forEach(entry => {
+            const day = new Date(entry.entry_date).getUTCDate() - 1; // get day of month (0-indexed)
+            const daySum = (entry.qc_count || 0) + (entry.cal_count || 0) + 
+                           (entry.repeat_count || 0) + (entry.waste_count || 0) + (entry.test_count || 0);
+            dailyTotals[day] = daySum;
+            totalActualTest += entry.test_count || 0;
+            totalOthers += (entry.qc_count || 0) + (entry.cal_count || 0) + 
+                           (entry.repeat_count || 0) + (entry.waste_count || 0);
+        });
+
+        return { 
+            name: test.name, 
+            totalActualTest, 
+            totalOthers, 
+            finalTotal: totalActualTest + totalOthers, 
+            dailyTotals 
+        };
+    });
+    // --- END PROCESSING ---
+
+    let tableHTML = `<table class="summary-table">
+                        <thead>
+                            <tr>
+                                <th class="sticky-col test-name-col">Test Name</th>
+                                <th>Total Actual Test</th>
+                                <th>Total Others</th>
+                                <th>Final Total</th>`;
+    for (let i = 1; i <= daysInMonth; i++) {
+        tableHTML += `<th>${i}</th>`;
+    }
+    tableHTML += `</tr></thead><tbody>`;
+
+    summaryData.forEach(row => {
+        tableHTML += `
+            <tr>
+                <td class="sticky-col test-name-col">${row.name}</td>
+                <td>${row.totalActualTest}</td>
+                <td>${row.totalOthers}</td>
+                <td>${row.finalTotal}</td>
+                ${row.dailyTotals.map(total => `<td>${total || ''}</td>`).join('')}
+            </tr>`;
+    });
+
+    summaryTableContainer.innerHTML = tableHTML + `</tbody></table>`;
+    window.summaryData = summaryData; // Make summaryData globally available for export
+    renderSummaryStats({ summaryData, selectedMonth });
+};
+
+    const renderSummaryStats = (data) => {
+        if (!data) {
+            summaryStats.innerHTML = '';
+            return;
+        }
+
+        const { summaryData, selectedMonth } = data;
+        
+        let totalTests = 0;
+        let totalOthers = 0;
+        let grandTotal = 0;
+        let testCount = summaryData.length;
+
         summaryData.forEach(row => {
-            tableHTML += `<tr>
-                <td class="sticky-col">${row.name}</td><td>${row.totalActualTest}</td>
-                <td>${row.totalOthers}</td><td>${row.finalTotal}</td>`;
-            row.dailyTotals.forEach(dayTotal => { tableHTML += `<td>${dayTotal > 0 ? dayTotal : ''}</td>`; });
-            tableHTML += `</tr>`;
+            totalTests += row.totalActualTest;
+            totalOthers += row.totalOthers;
+            grandTotal += row.finalTotal;
         });
-        summaryTableContainer.innerHTML = tableHTML + `</tbody></table>`;
+
+        summaryStats.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Total Tests</div>
+                        <div class="stat-value">${formatNumber(totalTests)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            ${getMonthName(selectedMonth)}
+                        </div>
+                    </div>
+                    <div class="stat-card-icon primary">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Total Others</div>
+                        <div class="stat-value">${formatNumber(totalOthers)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            QC, Cal, Repeat, Waste
+                        </div>
+                    </div>
+                    <div class="stat-card-icon orange">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Grand Total</div>
+                        <div class="stat-value">${formatNumber(grandTotal)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            All categories combined
+                        </div>
+                    </div>
+                    <div class="stat-card-icon green">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Test Types</div>
+                        <div class="stat-value">${testCount}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            Different tests tracked
+                        </div>
+                    </div>
+                    <div class="stat-card-icon red">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                </div>
+            </div>
+        `;
     };
 
     const renderAnalysisView = () => {
@@ -563,113 +1820,260 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const populateAnalysisTestFilter = () => {
         const analyzerId = parseInt(anAnalyzerFilter.value, 10);
-        const tests = appData.tests.filter(t => t.analyzerId === analyzerId);
-        const optionsHtml = tests.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-        anTestFilter.innerHTML = optionsHtml;
-    };
-
-    const renderAnalysisCharts = () => {
-        const testId = parseInt(anTestFilter.value, 10);
-        const test = appData.tests.find(t => t.id === testId);
-
-        if (monthlyConsumptionChart) monthlyConsumptionChart.destroy();
-        if (categoryConsumptionChart) categoryConsumptionChart.destroy();
-
-        if (!test) {
+        const tests = appData.tests.filter(t => t.analyzer_id === analyzerId);
+        
+        if (tests.length === 0) {
+            anTestFilter.innerHTML = '<option value="">No tests available</option>';
             return;
         }
 
-        const monthlyData = calculateMonthlyConsumption(testId);
-        const categoryData = calculateCategoryConsumption(testId);
+        const optionsHtml = tests.map(t => 
+            `<option value="${t.id}">${t.name}</option>`
+        ).join('');
+        anTestFilter.innerHTML = optionsHtml;
+    };
 
-        monthlyConsumptionChart = new Chart(monthlyConsumptionChartCanvas, {
-            type: 'bar',
-            data: {
-                labels: monthlyData.labels,
-                datasets: [{
-                    label: 'Total Monthly Consumption',
-                    data: monthlyData.data,
-                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, title: { display: true, text: 'Total Tests' } }
-                },
-                plugins: {
-                    title: { display: true, text: `Month-wise Consumption for ${test.name}`, font: { size: 16 } },
-                    legend: { display: false }
-                }
-            }
-        });
+   const renderAnalysisCharts = async () => {
+    const testId = parseInt(anTestFilter.value, 10);
+    const test = appData.tests.find(t => t.id === testId);
 
-        categoryConsumptionChart = new Chart(categoryConsumptionChartCanvas, {
-            type: 'pie',
-            data: {
-                labels: ['QC', 'Calibration', 'Repeats', 'Waste', 'Actual Tests'],
-                datasets: [{
-                    label: 'Consumption by Category',
-                    data: Object.values(categoryData),
-                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#6B7280', '#3B82F6']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: { display: true, text: `All-Time Breakdown for ${test.name}`, font: { size: 16 } },
-                    legend: { position: 'top' }
-                }
-            }
-        });
+    if (monthlyConsumptionChart) monthlyConsumptionChart.destroy();
+    if (categoryConsumptionChart) categoryConsumptionChart.destroy();
+
+    if (!test) {
+        document.getElementById('monthly-consumption-chart').parentElement.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-chart-bar"></i>
+                <h3>No Test Selected</h3>
+                <p>Select a test to view consumption analysis</p>
+            </div>
+            <canvas id="monthly-consumption-chart" style="display: none;"></canvas>
+        `;
+        document.getElementById('category-consumption-chart').parentElement.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-chart-pie"></i>
+                <h3>No Test Selected</h3>
+                <p>Select a test to view category breakdown</p>
+            </div>
+            <canvas id="category-consumption-chart" style="display: none;"></canvas>
+        `;
+        renderAnalysisStats(null);
+        return;
+    }
+
+    // --- FETCH ALL DATA FOR THE SELECTED TEST ---
+    const { data: allEntries, error } = await supabaseClient
+        .from('inventory_entries')
+        .select('*')
+        .eq('test_id', testId);
+
+    if (error) {
+        showToast('Error fetching analysis data', 'error');
+        console.error(error);
+        return;
+    }
+
+    // --- PROCESS DATA LOCALLY ---
+    // 1. For Monthly Consumption (Bar Chart)
+    const monthlyTotals = {};
+    allEntries.forEach(entry => {
+        const month = entry.entry_date.substring(0, 7); // "YYYY-MM"
+        if (!monthlyTotals[month]) {
+            monthlyTotals[month] = 0;
+        }
+        const total = (entry.qc_count || 0) + (entry.cal_count || 0) + 
+                      (entry.repeat_count || 0) + (entry.waste_count || 0) + (entry.test_count || 0);
+        monthlyTotals[month] += total;
+    });
+
+    const sortedMonths = Object.keys(monthlyTotals).sort();
+    const monthlyLabels = sortedMonths.map(month => {
+        const [year, monthNum] = month.split('-');
+        return new Date(year, monthNum - 1).toLocaleString('default', { month: 'short', year: '2-digit' });
+    });
+    const monthlyDataPoints = sortedMonths.map(month => monthlyTotals[month]);
+    const monthlyData = { labels: monthlyLabels, data: monthlyDataPoints };
+
+    // 2. For Category Consumption (Doughnut Chart)
+    const categoryData = { qc: 0, cal: 0, repeat: 0, waste: 0, test: 0 };
+    allEntries.forEach(entry => {
+        categoryData.qc += entry.qc_count || 0;
+        categoryData.cal += entry.cal_count || 0;
+        categoryData.repeat += entry.repeat_count || 0;
+        categoryData.waste += entry.waste_count || 0;
+        categoryData.test += entry.test_count || 0;
+    });
+
+    // --- RENDER CHARTS ---
+    // Restore canvas elements if they were replaced by the empty state
+    if (!document.getElementById('monthly-consumption-chart')) {
+        document.querySelector('.chart-wrapper:first-child').innerHTML = '<canvas id="monthly-consumption-chart"></canvas>';
+    }
+    if (!document.getElementById('category-consumption-chart')) {
+        document.querySelector('.chart-wrapper:last-child').innerHTML = '<canvas id="category-consumption-chart"></canvas>';
+    }
+
+    const monthlyCtx = document.getElementById('monthly-consumption-chart').getContext('2d');
+    const categoryCtx = document.getElementById('category-consumption-chart').getContext('2d');
+
+    monthlyConsumptionChart = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Total Monthly Consumption',
+                data: monthlyData.data,
+                backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(79, 70, 229, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Total Tests' } } },
+            plugins: { title: { display: true, text: `Month-wise Consumption for ${test.name}`, font: { size: 18 } } }
+        }
+    });
+
+    categoryConsumptionChart = new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['QC', 'Calibration', 'Repeats', 'Waste', 'Actual Tests'],
+            datasets: [{
+                label: 'Consumption by Category',
+                data: Object.values(categoryData),
+                backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#6B7280', '#4F46E5'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { title: { display: true, text: `All-Time Breakdown for ${test.name}`, font: { size: 18 } } }
+        }
+    });
+
+    renderAnalysisStats({ test, monthlyData, categoryData });
+};
+
+    const renderAnalysisStats = (data) => {
+        if (!data) {
+            analysisStats.innerHTML = '';
+            return;
+        }
+
+        const { test, monthlyData, categoryData } = data;
+        
+        const totalConsumption = Object.values(categoryData).reduce((sum, val) => sum + val, 0);
+        const avgMonthly = monthlyData.data.length > 0 
+            ? Math.round(monthlyData.data.reduce((sum, val) => sum + val, 0) / monthlyData.data.length)
+            : 0;
+        const peakMonth = monthlyData.data.length > 0
+            ? Math.max(...monthlyData.data)
+            : 0;
+        const actualTestPercentage = totalConsumption > 0
+            ? ((categoryData.test / totalConsumption) * 100).toFixed(1)
+            : 0;
+
+        analysisStats.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Total Consumption</div>
+                        <div class="stat-value">${formatNumber(totalConsumption)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            All-time for ${test.name}
+                        </div>
+                    </div>
+                    <div class="stat-card-icon primary">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Avg Monthly</div>
+                        <div class="stat-value">${formatNumber(avgMonthly)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            Average per month
+                        </div>
+                    </div>
+                    <div class="stat-card-icon green">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Peak Month</div>
+                        <div class="stat-value">${formatNumber(peakMonth)}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            Highest consumption
+                        </div>
+                    </div>
+                    <div class="stat-card-icon orange">
+                        <i class="fas fa-arrow-trend-up"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-label">Test Efficiency</div>
+                        <div class="stat-value">${actualTestPercentage}%</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
+                            Actual tests vs total
+                        </div>
+                    </div>
+                    <div class="stat-card-icon red">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                </div>
+            </div>
+        `;
     };
 
     // --- DATA CALCULATION & HANDLING ---
-    const handleTableInput = e => {
-        if (e.target.tagName !== 'INPUT' || e.target.type !== 'number') return;
-        const { testid, date, type } = e.target.dataset, value = e.target.value, month = date.substring(0, 7);
-        if (!appData.inventoryData[month]) appData.inventoryData[month] = {};
-        if (!appData.inventoryData[month][testid]) appData.inventoryData[month][testid] = {};
-        if (!appData.inventoryData[month][testid][date]) appData.inventoryData[month][testid][date] = {};
-        const numValue = parseInt(value, 10);
-        if (!isNaN(numValue) && numValue >= 0) {
-            appData.inventoryData[month][testid][date][type] = numValue;
-        } else {
-            delete appData.inventoryData[month][testid][date][type];
-            if (Object.keys(appData.inventoryData[month][testid][date]).length === 0) delete appData.inventoryData[month][testid][date];
-            if (Object.keys(appData.inventoryData[month][testid]).length === 0) delete appData.inventoryData[month][testid];
-        }
-        saveData();
-    };
+    const handleTableInput = async (e) => {
+    if (e.target.tagName !== 'INPUT' || e.target.type !== 'number') return;
 
-    const calculateSummary = (analyzerId, selectedMonth) => {
-        const tests = appData.tests.filter(t => t.analyzerId === analyzerId);
-        const monthData = appData.inventoryData[selectedMonth] || {};
-        const [year, month] = selectedMonth.split('-').map(Number);
-        const daysInMonth = new Date(year, month, 0).getDate();
+    const { testid, date, type } = e.target.dataset;
+    const value = e.target.value;
+    const numValue = parseInt(value, 10);
 
-        return tests.map(test => {
-            let totalActualTest = 0, totalOthers = 0;
-            const dailyTotals = Array(daysInMonth).fill(0);
-            const testMonthData = monthData[test.id] || {};
-            for (const date in testMonthData) {
-                const day = parseInt(date.split('-')[2], 10);
-                const dayData = testMonthData[date];
-                const daySum = (dayData.qc || 0) + (dayData.cal || 0) + (dayData.repeat || 0) + (dayData.waste || 0) + (dayData.test || 0);
-                dailyTotals[day - 1] = daySum;
-                totalActualTest += dayData.test || 0;
-                totalOthers += (dayData.qc || 0) + (dayData.cal || 0) + (dayData.repeat || 0) + (dayData.waste || 0);
-            }
-            return { name: test.name, totalActualTest, totalOthers, finalTotal: totalActualTest + totalOthers, dailyTotals };
-        });
+    if (isNaN(numValue) || numValue < 0) return;
+
+    const record = {
+        test_id: parseInt(testid, 10),
+        entry_date: date,
+        [`${type}_count`]: numValue
     };
+    
+    // Use upsert to create or update the record for that test and date
+    const { error } = await supabaseClient
+        .from('inventory_entries')
+        .upsert(record, { onConflict: 'test_id, entry_date' });
+
+    if (error) {
+        showToast('Failed to save data', 'error');
+        console.error('Upsert error:', error);
+    }
+    // No need to call saveData() anymore.
+    
+    // We can re-render stats, but it's better to update them from the new input directly
+    // The renderInventoryStats function will need to be updated to handle this async nature or just recalculate
+};
+
+
 
     const calculateMonthlyConsumption = testId => {
         const monthlyTotals = {};
+        
         Object.keys(appData.inventoryData).forEach(month => {
             const testMonthData = appData.inventoryData[month][testId];
             if (testMonthData) {
@@ -680,17 +2084,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 monthlyTotals[month] = total;
             }
         });
+        
         const sortedMonths = Object.keys(monthlyTotals).sort();
         const labels = sortedMonths.map(month => {
             const [year, monthNum] = month.split('-');
-            return new Date(year, monthNum - 1).toLocaleString('default', { month: 'short', year: '2-digit' });
+            return new Date(year, monthNum - 1).toLocaleString('default', { 
+                month: 'short', 
+                year: '2-digit' 
+            });
         });
         const data = sortedMonths.map(month => monthlyTotals[month]);
+        
         return { labels, data };
     };
 
     const calculateCategoryConsumption = testId => {
         const categoryTotals = { qc: 0, cal: 0, repeat: 0, waste: 0, test: 0 };
+        
         Object.values(appData.inventoryData).forEach(monthData => {
             const testMonthData = monthData[testId];
             if (testMonthData) {
@@ -703,81 +2113,156 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
+        
         return categoryTotals;
     };
 
     // --- SETTINGS CRUD HANDLERS ---
-    const handleAddAnalyzer = e => {
-        e.preventDefault();
-        const name = analyzerNameInput.value.trim();
-        if (name && !appData.analyzers.some(a => a.name.toLowerCase() === name.toLowerCase())) {
-            appData.analyzers.push({ id: Date.now(), name });
-            saveData(); renderAll(); renderDailyEntryView(); analyzerNameInput.value = '';
-        } else { alert('Analyzer name cannot be empty or already exist.'); }
-    };
+   const handleAddAnalyzer = async (e) => {
+    e.preventDefault();
+    const name = analyzerNameInput.value.trim();
+    if (!name) { /* ... error handling ... */ return; }
+
+    const { data, error } = await supabaseClient
+        .from('analyzers')
+        .insert({ name: name })
+        .select() // This returns the created record
+        .single();
+
+    if (error) {
+        showToast('Error adding analyzer. It may already exist.', 'error');
+        console.error(error);
+        return;
+    }
+
+    appData.analyzers.push(data); // Update local state to reflect change
+    renderAll();
+    renderDailyEntryView();
+    analyzerNameInput.value = '';
+    showToast(`Analyzer "${name}" added successfully!`);
+};
     
-    const handleCRUD = (e, type) => {
-        const target = e.target.closest('button');
-        if (!target) return;
-        const id = parseInt(target.dataset.id, 10);
-        const isDelete = target.classList.contains(`delete-${type}-btn`);
-        const isEdit = target.classList.contains(`edit-${type}-btn`);
-        if (isEdit) {
-            const item = appData[`${type}s`].find(i => i.id === id);
-            const newName = prompt(`Enter new ${type} name:`, item.name);
-            if (newName && newName.trim()) {
-                item.name = newName.trim();
-                saveData(); renderAll(); renderDailyEntryView();
+ const handleCRUD = async (e, type) => {
+    const target = e.target.closest('button');
+    if (!target) return;
+
+    const id = parseInt(target.dataset.id, 10);
+    const isDelete = target.classList.contains(`delete-${type}-btn`);
+    const isEdit = target.classList.contains(`edit-${type}-btn`);
+    const tableName = `${type}s`; // 'analyzers' or 'tests'
+
+    if (isEdit) {
+        const item = appData[tableName].find(i => i.id === id);
+        const newName = prompt(`Enter new ${type} name:`, item.name);
+
+        if (newName && newName.trim()) {
+            const trimmedName = newName.trim();
+            const { data, error } = await supabaseClient
+                .from(tableName)
+                .update({ name: trimmedName })
+                .eq('id', id)
+                .select()
+                .single();
+            
+            if (error) {
+                showToast(`Error renaming ${type}. Name may already exist.`, 'error');
+                return;
             }
+
+            // Update local state
+            item.name = data.name; 
+            renderAll();
+            showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} renamed successfully!`);
         }
-        if (isDelete) {
-            const warning = type === 'analyzer' ? 'WARNING: Deleting this analyzer will also delete ALL associated tests and their inventory data. Are you sure?' : 'Are you sure you want to delete this test and all its data?';
-            if (confirm(warning)) {
-                if (type === 'analyzer') {
-                    const associatedTestIds = appData.tests.filter(t => t.analyzerId === id).map(t => t.id);
-                    appData.tests = appData.tests.filter(t => t.analyzerId !== id);
-                    for (const month in appData.inventoryData) {
-                        associatedTestIds.forEach(testId => delete appData.inventoryData[month][testId]);
-                    }
-                }
-                appData[`${type}s`] = appData[`${type}s`].filter(i => i.id !== id);
-                if (type === 'test') {
-                     for (const month in appData.inventoryData) delete appData.inventoryData[month][id];
-                }
-                saveData(); renderAll(); renderDailyEntryView();
+    }
+
+    if (isDelete) {
+        // Your confirm logic can stay the same
+        if (confirm(`⚠️ WARNING: Are you sure you want to delete this ${type}? This action cannot be undone.`)) {
+            const { error } = await supabaseClient
+                .from(tableName)
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                showToast(`Error deleting ${type}.`, 'error');
+                return;
             }
+
+            // Update local state by filtering out the deleted item
+            appData[tableName] = appData[tableName].filter(i => i.id !== id);
+            if (type === 'analyzer') {
+                // Also remove associated tests from local state
+                appData.tests = appData.tests.filter(t => t.analyzer_id !== id);
+            }
+            
+            renderAll();
+            renderDailyEntryView();
+            showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
         }
-    };
+    }
+};
+
+
+    
     const handleAnalyzerActions = e => handleCRUD(e, 'analyzer');
     const handleTestActions = e => handleCRUD(e, 'test');
     
-    const handleAddTest = e => {
-        e.preventDefault();
-        const name = testNameInput.value.trim(), analyzerId = parseInt(testAnalyzerSelect.value, 10);
-        if (name && analyzerId) {
-            const comboExists = appData.tests.some(test => test.name.toLowerCase() === name.toLowerCase() && test.analyzerId === analyzerId);
-            if(comboExists) {
-                alert('This test name already exists for the selected analyzer.');
-                return;
-            }
-            appData.tests.push({ id: Date.now(), name, analyzerId });
-            saveData(); renderSettings(); addTestForm.reset();
-        } else { alert('Please provide a test name and select an analyzer.'); }
-    };
+  const handleAddTest = async (e) => {
+    e.preventDefault();
+    const name = testNameInput.value.trim();
+    const analyzerId = parseInt(testAnalyzerSelect.value, 10);
+    if (!name || !analyzerId) { /* ... error handling ... */ return; }
+    
+    const { data, error } = await supabaseClient
+        .from('tests')
+        .insert({ name: name, analyzer_id: analyzerId })
+        .select()
+        .single();
+
+    if (error) {
+        showToast('Error adding test. It may already exist for this analyzer.', 'error');
+        console.error(error);
+        return;
+    }
+
+  appData.tests.push({
+  ...data,
+  analyzerId: data.analyzer_id
+});
+
+    renderSettings();
+    addTestForm.reset();
+    showToast(`Test "${name}" added successfully!`);
+};
 
     // --- EXPORT FUNCTIONALITY ---
     const exportSummaryToCSV = () => {
-        const analyzerId = parseInt(sumAnalyzerFilter.value, 10), selectedMonth = sumMonthFilter.value;
-        if (!analyzerId || !selectedMonth) { alert('Please select an analyzer and month to export.'); return; }
+        const analyzerId = parseInt(sumAnalyzerFilter.value, 10);
+        const selectedMonth = sumMonthFilter.value;
         
-        const [year, monthNum] = selectedMonth.split('-'), daysInMonth = new Date(year, monthNum, 0).getDate();
-        const dateForMonthName = new Date(year, monthNum - 1, 1), monthName = dateForMonthName.toLocaleString('default', { month: 'long' });
-        const summaryData = calculateSummary(analyzerId, selectedMonth);
+        if (!analyzerId || !selectedMonth) {
+            showToast('Please select an analyzer and month to export', 'error');
+            return;
+        }
+        
+        const [year, monthNum] = selectedMonth.split('-');
+        const daysInMonth = new Date(year, monthNum, 0).getDate();
+        const dateForMonthName = new Date(year, monthNum - 1, 1);
+        const monthName = dateForMonthName.toLocaleString('default', { month: 'long' });
+
+        if (summaryData.length === 0) {
+            showToast('No data available to export', 'error');
+            return;
+        }
 
         let header = "Test Name,Total Actual Test,Total Others,Final Total";
-        for(let i=1; i <= daysInMonth; i++) { header += `,Day ${i}`; }
+        for (let i = 1; i <= daysInMonth; i++) {
+            header += `,Day ${i}`;
+        }
         
         let csvContent = header + "\n";
+        
         summaryData.forEach(row => {
             let csvRow = `"${row.name}",${row.totalActualTest},${row.totalOthers},${row.finalTotal}`;
             csvRow += "," + row.dailyTotals.join(',');
@@ -785,8 +2270,223 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         const analyzer = appData.analyzers.find(a => a.id === analyzerId);
-        const fileName = `Inventory_Summary_${analyzer.name}_${monthName}-${year}.csv`;
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const fileName = `${analyzer.name.replace(/\s+/g, '_')}_${monthName}_${year}.csv`;
+        
+        downloadFile(csvContent, fileName, 'text/csv');
+        showToast('Summary exported successfully!');
+    };
+
+    const exportAnalysisData = () => {
+        const testId = parseInt(anTestFilter.value, 10);
+        const test = appData.tests.find(t => t.id === testId);
+        
+        if (!test) {
+            showToast('Please select a test to export', 'error');
+            return;
+        }
+
+        const monthlyData = calculateMonthlyConsumption(testId);
+        const categoryData = calculateCategoryConsumption(testId);
+
+        let csvContent = `Analysis Report for: ${test.name}\n\n`;
+        csvContent += "MONTHLY CONSUMPTION\n";
+        csvContent += "Month,Total Consumption\n";
+        
+        monthlyData.labels.forEach((label, index) => {
+            csvContent += `${label},${monthlyData.data[index]}\n`;
+        });
+
+        csvContent += "\n\nCATEGORY BREAKDOWN\n";
+        csvContent += "Category,Count,Percentage\n";
+        
+        const total = Object.values(categoryData).reduce((sum, val) => sum + val, 0);
+        const categories = ['QC', 'Calibration', 'Repeats', 'Waste', 'Actual Tests'];
+        const keys = ['qc', 'cal', 'repeat', 'waste', 'test'];
+        
+        keys.forEach((key, index) => {
+            const value = categoryData[key];
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0;
+            csvContent += `${categories[index]},${value},${percentage}%\n`;
+        });
+
+        csvContent += `\nTotal,${total},100%\n`;
+
+        const fileName = `Analysis_${test.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+        downloadFile(csvContent, fileName, 'text/csv');
+        showToast('Analysis data exported successfully!');
+    };
+
+    // --- DATA MANAGEMENT ---
+  // --- DATA MANAGEMENT (BACKUP & RESTORE) ---
+
+// --- DATA MANAGEMENT (BACKUP & RESTORE) ---
+
+const backupData = async () => {
+    showToast('Generating configuration backup...', 'success');
+    try {
+        const { data: analyzers, error: analyzerError } = await supabaseClient.from('analyzers').select('*');
+        if (analyzerError) throw analyzerError;
+
+        const { data: tests, error: testError } = await supabaseClient.from('tests').select('*');
+        if (testError) throw testError;
+
+        const backupConfig = { analyzers, tests };
+        const dataStr = JSON.stringify(backupConfig, null, 2);
+        const fileName = `Lab_Config_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        downloadFile(dataStr, fileName, 'application/json');
+        showToast('Configuration backup created successfully!', 'success');
+    } catch (error) {
+        showToast(`Failed to create backup: ${error.message}`, 'error');
+        console.error('Backup error:', error);
+    }
+};
+
+const restoreData = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+        return; // Exit if no file is selected
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+        try {
+            const restoredConfig = JSON.parse(event.target.result);
+            
+            // 1. Validate the backup file structure is as expected
+            if (!Array.isArray(restoredConfig.analyzers) || !Array.isArray(restoredConfig.tests)) {
+                throw new Error('Invalid backup file format. Must contain "analyzers" and "tests" arrays.');
+            }
+
+            // 2. Confirm with the user, as this is a destructive action
+            const confirmed = confirm(
+                '⚠️ WARNING: Restoring will DELETE all current analyzers and tests before importing from the file.\n\n' +
+                'Your inventory data will NOT be affected.\n\n' +
+                'This action cannot be undone. Do you want to continue?'
+            );
+
+            if (!confirmed) {
+                showToast('Restore cancelled by user.', 'error');
+                restoreFileInput.value = ''; // Reset file input
+                return;
+            }
+            
+            showToast('Restoring configuration... Please wait.', 'success');
+
+            // 3. Delete existing configuration (tests first due to database relationships)
+            await supabaseClient.from('tests').delete().neq('id', 0);
+            await supabaseClient.from('analyzers').delete().neq('id', 0);
+
+            // 4. Insert new analyzers, stripping the old IDs so the database generates new ones
+            const analyzersToInsert = restoredConfig.analyzers.map(({ id, ...rest }) => rest);
+            const { data: newAnalyzers, error: analyzerInsertError } = await supabaseClient
+                .from('analyzers')
+                .insert(analyzersToInsert)
+                .select(); // .select() is crucial to get the new IDs
+            if (analyzerInsertError) throw analyzerInsertError;
+
+            // 5. Create a map of the original analyzer names to their NEW database IDs
+            const analyzerNameIdMap = new Map(newAnalyzers.map(a => [a.name, a.id]));
+
+            // 6. Prepare tests for insertion, replacing their old analyzer_id with the correct new one
+            const testsToInsert = restoredConfig.tests.map(test => {
+                // Find the test's original parent analyzer from the backup file
+                const originalAnalyzer = restoredConfig.analyzers.find(a => a.id === test.analyzer_id);
+                if (!originalAnalyzer) return null; // Skip test if its original analyzer is missing from the file
+
+                // Find the new ID for that analyzer using the map we just created
+                const newAnalyzerId = analyzerNameIdMap.get(originalAnalyzer.name);
+                if (!newAnalyzerId) return null; // Skip test if its analyzer wasn't successfully inserted
+
+                return {
+                    name: test.name,
+                    analyzer_id: newAnalyzerId
+                };
+            }).filter(Boolean); // filter(Boolean) removes any null entries from the array
+
+            if (testsToInsert.length > 0) {
+                 const { error: testInsertError } = await supabaseClient.from('tests').insert(testsToInsert);
+                 if (testInsertError) throw testInsertError;
+            }
+
+            // 7. Refresh the application state from the database and re-render the UI
+            await loadInitialData();
+            renderAll();
+            renderDailyEntryView();
+            showToast('Configuration restored successfully!', 'success');
+
+        } catch (error) {
+            showToast(`Failed to restore data: ${error.message}`, 'error');
+            console.error('Full Restore Error:', error); // Log the full error for easier debugging
+        } finally {
+            // ALWAYS reset the file input so the 'change' event can fire again
+            restoreFileInput.value = '';
+        }
+    };
+    
+    // THE FIX IS HERE: The method is "readAsText", not "readText".
+    reader.readAsText(file);
+};
+
+
+// --- DATA MANAGEMENT (DELETION / RESET) ---
+
+const handleResetInventory = async () => {
+    const confirmText = prompt("This will delete ALL inventory records. Type 'DELETE INVENTORY' to confirm:");
+    if (confirmText !== 'DELETE INVENTORY') {
+        if (confirmText !== null) showToast('Reset cancelled.', 'error');
+        return;
+    }
+    try {
+        const { error } = await supabaseClient.from('inventory_entries').delete().neq('id', 0);
+        if (error) throw error;
+        appData.inventoryData = {};
+        renderDailyEntryView(); 
+        showToast('All inventory data has been deleted!', 'success');
+    } catch (error) {
+        showToast(`Error deleting inventory: ${error.message}`, 'error');
+    }
+};
+
+const handleResetTests = async () => {
+    const confirmText = prompt("This will delete ALL tests and inventory. Type 'DELETE TESTS' to confirm:");
+    if (confirmText !== 'DELETE TESTS') {
+        if (confirmText !== null) showToast('Reset cancelled.', 'error');
+        return;
+    }
+    try {
+        await supabaseClient.from('inventory_entries').delete().neq('id', 0);
+        await supabaseClient.from('tests').delete().neq('id', 0);
+        appData.tests = [];
+        appData.inventoryData = {};
+        renderAll();
+        renderDailyEntryView();
+        showToast('All tests and inventory data deleted!', 'success');
+    } catch (error) {
+        showToast(`Error deleting tests: ${error.message}`, 'error');
+    }
+};
+
+const handleResetAnalyzers = async () => {
+    const confirmText = prompt("⚠️ DANGER: This will delete EVERYTHING. Type 'DELETE ALL' to confirm:");
+    if (confirmText !== 'DELETE ALL') {
+        if (confirmText !== null) showToast('Reset cancelled.', 'error');
+        return;
+    }
+    try {
+        await supabaseClient.from('inventory_entries').delete().neq('id', 0);
+        await supabaseClient.from('tests').delete().neq('id', 0);
+        await supabaseClient.from('analyzers').delete().neq('id', 0);
+        appData = { analyzers: [], tests: [], inventoryData: {} };
+        renderAll();
+        renderDailyEntryView();
+        showToast('Everything has been deleted.', 'success');
+    } catch (error) {
+        showToast(`Error resetting all data: ${error.message}`, 'error');
+    }
+};
+    const downloadFile = (content, fileName, mimeType) => {
+        const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
@@ -795,11 +2495,50 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     };
 
     // --- START THE APPLICATION ---
     init();
 });
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
 </script>
 </body>
 </html>
